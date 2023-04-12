@@ -1,11 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login_signup/consts.dart';
+import 'package:flutter_login_signup/pages/login_page.dart';
+import 'package:flutter_login_signup/services/Login_signupService.dart';
 import 'package:flutter_svg/svg.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+class SignUpPage extends StatefulWidget {
+  const SignUpPage({super.key});
 
+  @override
+  State<SignUpPage> createState() => _SignUpPageState();
+}
+
+
+class _SignUpPageState extends State<SignUpPage> {
+  var email = TextEditingController();
+  var password = TextEditingController();
+  var password2 = TextEditingController();
+  var fullname = TextEditingController();
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -27,30 +39,42 @@ class LoginPage extends StatelessWidget {
               overflowSpacing: size.height * 0.014,
               children: [
                 Image.asset(image1),
-                Text(
-                  "Welcome Back!",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 20,
-                    color: kWhiteColor.withOpacity(0.7),
-                  ),
-                ),
+
                 const Text(
-                  "Please , Log In.",
+                  "Please , Sign Up.",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 34,
+                    fontSize: 30,
                     color: kWhiteColor,
                   ),
                 ),
                 SizedBox(height: size.height * 0.024),
                 TextField(
+                  controller: fullname,
                   keyboardType: TextInputType.text,
                   style: const TextStyle(color: kInputColor),
                   decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.symmetric(vertical: 25.0),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 20.0),
+                    filled: true,
+                    hintText: "Full Name",
+                    prefixIcon: IconButton(
+                      onPressed: () {},
+                      icon: SvgPicture.asset(userIcon),
+                    ),
+                    fillColor: kWhiteColor,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(37),
+                    ),
+                  ),
+                ),
+                TextField(
+                  controller: email,
+                  keyboardType: TextInputType.emailAddress,
+                  style: const TextStyle(color: kInputColor),
+                  decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.symmetric(vertical: 20.0),
                     filled: true,
                     hintText: "Email",
                     prefixIcon: IconButton(
@@ -65,13 +89,34 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
                 TextField(
+                  controller: password,
                   obscureText: true,
                   keyboardType: TextInputType.text,
                   style: const TextStyle(color: kInputColor),
                   decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.symmetric(vertical: 25.0),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 20.0),
                     filled: true,
                     hintText: "Password",
+                    prefixIcon: IconButton(
+                      onPressed: () {},
+                      icon: SvgPicture.asset(keyIcon),
+                    ),
+                    fillColor: kWhiteColor,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(37),
+                    ),
+                  ),
+                ),
+                TextField(
+                  controller: password2,
+                  obscureText: true,
+                  keyboardType: TextInputType.text,
+                  style: const TextStyle(color: kInputColor),
+                  decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.symmetric(vertical: 20.0),
+                    filled: true,
+                    hintText: "Confirm Password",
                     prefixIcon: IconButton(
                       onPressed: () {},
                       icon: SvgPicture.asset(keyIcon),
@@ -94,14 +139,29 @@ class LoginPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(37),
                     ),
                     child: const Text(
-                      "Continue",
+                      "SignUp",
                       style: TextStyle(
                         color: kWhiteColor,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: (){
+                    if(fullname.text.toString().isNotEmpty &&
+                        email.text.toString().isNotEmpty &&
+                        password.text.toString().isNotEmpty &&
+                        password2.text.toString().isNotEmpty){
+                      if(password.text.toString() == password2.text.toString()){
+                        AuthServices.signupUser(email.text.toString(), password.text.toString(), fullname.text.toString(), context);
+                      }else{
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(content: Text('Password Does not match')));
+                      }
+                    }else{
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(const SnackBar(content: Text('Fill all the Fields')));
+                    }
+                  },
                 ),
                 SizedBox(height: size.height * 0.014),
                 SvgPicture.asset("assets/icons/deisgn.svg"),
@@ -125,14 +185,17 @@ class LoginPage extends StatelessWidget {
                       color: const Color.fromRGBO(225, 225, 225, 0.28),
                     ),
                     child: const Text(
-                      "Continue",
+                      "Sign In",
                       style: TextStyle(
                         color: kWhiteColor,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () =>Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  ),
                 ),
               ],
             ),
